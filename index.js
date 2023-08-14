@@ -3,10 +3,10 @@ import fs from "fs";
 import csvWriter from "csv-write-stream";
 
 // Specify your API keys and access tokens
-const consumerKey = "MFVnG0TWDdH990U849DokIWLO";
-const consumerSecret = "LE43p65k7QSgquGqxzk9qkegk3w4PQfKlcRKlg1ADNQGEJ7KLL";
-const accessToken = "1126490735497359360-PRHABPfoSQ0jzM8o7xr0dsYF5aAEX0";
-const accessTokenSecret = "1iDqfuwzdAOcji0TJQ3HzCmw9qkvTvFzGxaxtDZffxfTd";
+const consumerKey = "";
+const consumerSecret = "";
+const accessToken = "";
+const accessTokenSecret = "";
 
 // Specify the screen name of the Twitter user (your username)
 const screenName = "thesaasacademy";
