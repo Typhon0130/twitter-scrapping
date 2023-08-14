@@ -11,7 +11,7 @@ const accessTokenSecret = "";
 // Specify the screen name of the Twitter user (your username)
 const screenName = "thesaasacademy";
 
-var test;
+var Bearerlocaltoken;
 
 const handleGetLikingUsers = async (tweet_id) => {
   try {
@@ -19,7 +19,7 @@ const handleGetLikingUsers = async (tweet_id) => {
       `https://api.twitter.com/2/tweets/${tweet_id}/liking_users`,
       {
         headers: {
-          Authorization: `Bearer ${test}`,
+          Authorization: `Bearer ${Bearerlocaltoken}`,
         },
       }
     );
@@ -36,7 +36,7 @@ const handleGetRetweets = async (tweet_id) => {
       `https://api.twitter.com/2/tweets/${tweet_id}/retweeted_by`,
       {
         headers: {
-          Authorization: `Bearer ${test}`,
+          Authorization: `Bearer ${Bearerlocaltoken}`,
         },
       }
     );
@@ -67,7 +67,7 @@ export const index = () => {
     )
     .then((response) => {
       const bearerToken = response.data.access_token;
-      test = response.data.access_token;
+      Bearerlocaltoken = response.data.access_token;
 
       // Retrieve user ID from screen name
       return axios.get(
@@ -84,7 +84,7 @@ export const index = () => {
       // Retrieve tweet history for the specified user ID
       return axios.get(`https://api.twitter.com/2/users/${userId}/tweets`, {
         headers: {
-          Authorization: `Bearer ${test}`,
+          Authorization: `Bearer ${Bearerlocaltoken}`,
         },
       });
     })
