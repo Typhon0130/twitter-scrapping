@@ -3,10 +3,10 @@ import fs from "fs";
 import csvWriter from "csv-write-stream";
 
 // Specify your API keys and access tokens
-const consumerKey = "";
-const consumerSecret = "";
-const accessToken = "";
-const accessTokenSecret = "";
+const consumerKey = process.env.consumerKey;
+const consumerSecret = process.env.consumerSecret;
+const accessToken = process.env.accessToken;
+const accessTokenSecret = process.env.accessTokenSecret;
 
 // Specify the screen name of the Twitter user (your username)
 const screenName = "thesaasacademy";
