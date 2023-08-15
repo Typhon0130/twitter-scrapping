@@ -1,6 +1,8 @@
 import axios from "axios";
 import fs from "fs";
 import csvWriter from "csv-write-stream";
+import dotenv from "dotenv";
+dotenv.config(".env");
 
 // Specify your API keys and access tokens
 const consumerKey = process.env.consumerKey;
@@ -13,6 +15,7 @@ const screenName = "thesaasacademy";
 
 var Bearerlocaltoken;
 
+// Get the liked Users count for each tweet
 const handleGetLikingUsers = async (tweet_id) => {
   try {
     const response = await axios.get(
@@ -30,6 +33,7 @@ const handleGetLikingUsers = async (tweet_id) => {
   }
 };
 
+// Get the Retweets for each tweet
 const handleGetRetweets = async (tweet_id) => {
   try {
     const response = await axios.get(
@@ -40,8 +44,30 @@ const handleGetRetweets = async (tweet_id) => {
         },
       }
     );
-    const data = response.data;
+    const data = response.data.meta.result_count;
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+// Get the Impressions for each tweet
+
+// Get the Comments. for each tweet
+// tweet.fields=in_reply_to_user_id,author_id,created_at,conversation_id
+const handleGetComments = async (tweet_id) => {
+  try {
+    const response = await axios.get(
+      `https://api.twitter.com/2/tweets/search/recent?query=conversation_id:${tweet_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${Bearerlocaltoken}`,
+        },
+      }
+    );
+    const data = response.data.meta.result_count;
     console.log(data);
+    return data;
   } catch (err) {
     throw err;
   }
@@ -82,17 +108,27 @@ export const index = () => {
     .then((response) => {
       const userId = response.data.data[0].id;
       // Retrieve tweet history for the specified user ID
-      return axios.get(`https://api.twitter.com/2/users/${userId}/tweets`, {
-        headers: {
-          Authorization: `Bearer ${Bearerlocaltoken}`,
-        },
-      });
+      return axios.get(
+        `https://api.twitter.com/2/users/${userId}/tweets?max_results=100`,
+        {
+          headers: {
+            Authorization: `Bearer ${Bearerlocaltoken}`,
+          },
+        }
+      );
     })
     .then(async (response) => {
       const tweetData = response.data.data;
       // Prepare CSV file for storing tweet data
       const csvWriterInstance = csvWriter({
-        headers: ["Tweet ID", "EDIT_ID", "Full Text", "Liking User"],
+        headers: [
+          "Tweet ID",
+          "EDIT_ID",
+          "Full Text",
+          "Liking User",
+          // "ReTweets",
+          "Comments",
+        ],
       });
 
       csvWriterInstance.pipe(fs.createWriteStream("./tweet_history.csv"));
@@ -101,12 +137,15 @@ export const index = () => {
       for (let i = 0; i < tweetData.length; i++) {
         const tweet = tweetData[i];
         const liking_user = await handleGetLikingUsers(tweet.id);
-        const retweets = await handleGetRetweets(tweet.id);
+        // const retweets = await handleGetRetweets(tweet.id);
+        const comments = await handleGetComments(tweet.id);
         csvWriterInstance.write([
           tweet.id,
           tweet.edit_history_tweet_ids[0],
           tweet.text,
-          liking_user,
+          // liking_user,
+          // retweets,
+          comments,
         ]);
       }
 
