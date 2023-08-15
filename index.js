@@ -19,15 +19,20 @@ var Bearerlocaltoken;
 const handleGetLikingUsers = async (tweet_id) => {
   try {
     const response = await axios.get(
-      `https://api.twitter.com/2/tweets/${tweet_id}/liking_users`,
+      `https://api.twitter.com/2/tweets/${tweet_id}/liking_users?user.fields=name,username,description`,
       {
         headers: {
           Authorization: `Bearer ${Bearerlocaltoken}`,
         },
       }
     );
-    const data = response.data.meta.result_count;
-    return data;
+    const count = await response.data.meta.result_count;
+    const data = await response.data.data;
+    // console.log(data, count);
+    return {
+      count,
+      data,
+    };
   } catch (err) {
     throw err;
   }
@@ -54,7 +59,6 @@ const handleGetRetweets = async (tweet_id) => {
 // Get the Impressions for each tweet
 
 // Get the Comments. for each tweet
-// tweet.fields=in_reply_to_user_id,author_id,created_at,conversation_id
 const handleGetComments = async (tweet_id) => {
   try {
     const response = await axios.get(
@@ -109,7 +113,7 @@ export const index = () => {
       const userId = response.data.data[0].id;
       // Retrieve tweet history for the specified user ID
       return axios.get(
-        `https://api.twitter.com/2/users/${userId}/tweets?max_results=100`,
+        `https://api.twitter.com/2/users/${userId}/tweets?max_results=50`,
         {
           headers: {
             Authorization: `Bearer ${Bearerlocaltoken}`,
@@ -123,11 +127,11 @@ export const index = () => {
       const csvWriterInstance = csvWriter({
         headers: [
           "Tweet ID",
-          "EDIT_ID",
           "Full Text",
           "Liking User",
-          // "ReTweets",
-          "Comments",
+          "Liked User username",
+          "Liked User name",
+          "Liked User Description",
         ],
       });
 
@@ -137,16 +141,28 @@ export const index = () => {
       for (let i = 0; i < tweetData.length; i++) {
         const tweet = tweetData[i];
         const liking_user = await handleGetLikingUsers(tweet.id);
-        // const retweets = await handleGetRetweets(tweet.id);
-        const comments = await handleGetComments(tweet.id);
-        csvWriterInstance.write([
-          tweet.id,
-          tweet.edit_history_tweet_ids[0],
-          tweet.text,
-          // liking_user,
-          // retweets,
-          comments,
-        ]);
+        if (liking_user.count != 0) {
+          for (let j = 0; j < liking_user.data.length; j++) {
+            const liked_user = liking_user.data[j];
+            csvWriterInstance.write([
+              tweet.id.toString(),
+              tweet.text,
+              liking_user.count,
+              liked_user.name,
+              liked_user.username,
+              liked_user.description,
+            ]);
+          }
+        } else {
+          csvWriterInstance.write([
+            tweet.id.toString(),
+            tweet.text,
+            liking_user.count,
+            "",
+            "",
+            "",
+          ]);
+        }
       }
 
       // Close CSV file

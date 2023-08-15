@@ -4,3 +4,6 @@
 # Ignore Secret Varaible
 
 .env
+
+# Ignore Test File
+tweet_history.csv
