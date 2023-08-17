@@ -15,6 +15,11 @@ const screenName = "thesaasacademy";
 
 var Bearerlocaltoken;
 
+// Encode consumer key and consumer secret
+const encodedCredentials = Buffer.from(
+  `${consumerKey}:${consumerSecret}`
+).toString("base64");
+
 // Get the liked Users count for each tweet
 const handleGetLikingUsers = async (tweet_id) => {
   try {
@@ -22,13 +27,12 @@ const handleGetLikingUsers = async (tweet_id) => {
       `https://api.twitter.com/2/tweets/${tweet_id}/liking_users?user.fields=name,username,description`,
       {
         headers: {
-          Authorization: `Bearer ${Bearerlocaltoken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );
     const count = await response.data.meta.result_count;
     const data = await response.data.data;
-    // console.log(data, count);
     return {
       count,
       data,
@@ -70,17 +74,80 @@ const handleGetComments = async (tweet_id) => {
       }
     );
     const data = response.data.meta.result_count;
-    console.log(data);
     return data;
   } catch (err) {
     throw err;
   }
 };
 
-// Encode consumer key and consumer secret
-const encodedCredentials = Buffer.from(
-  `${consumerKey}:${consumerSecret}`
-).toString("base64");
+// Send new message to user using User Id.
+// const handleSendDirectMessage = async () => {
+//   const user_id = 2890133000;
+//   try {
+//     console.log(Bearerlocaltoken);
+
+//     await axios({
+//       method: "post",
+//       url: `https://api.twitter.com/2/dm_conversations/with/2890133000/messages`,
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//         "Content-Type": "application/json",
+//         "Accept-Encoding": "gzip, deflate, br",
+//       },
+//       data: {
+//         text: "Hello World!",
+//       },
+//     })
+//       .then((res) => {
+//         console.log(1);
+//         console.log(res);
+//       })
+//       .catch((err) => {
+//         console.log(2);
+//         console.log(err);
+//       });
+//   } catch (err) {
+//     console.log(err);
+//     return;
+//   }
+// };
+
+export const handleSendDirectMessage = () => {
+  axios
+    .post(
+      "https://api.twitter.com/oauth2/token",
+      "grant_type=client_credentials",
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${encodedCredentials}`,
+        },
+      }
+    )
+    .then(async (response) => {
+      const bearerToken = response.data;
+      console.log(bearerToken, "bearerToken");
+      try {
+        const res = await axios({
+          method: "post",
+          url: `https://api.twitter.com/2/dm_conversations/with/2890133000/messages`,
+          headers: {
+            Authorization: `Bearer ${bearerToken}`,
+            "Content-Type": "application/json",
+            "Accept-Encoding": "gzip, deflate, br",
+          },
+          data: {
+            text: "Hello World!",
+          },
+        });
+        console.log(1);
+        console.log(res);
+      } catch (err) {
+        console.log(2);
+        console.log(err);
+      }
+    });
+};
 
 export const index = () => {
   // Request an OAuth 2 Bearer token
@@ -113,7 +180,7 @@ export const index = () => {
       const userId = response.data.data[0].id;
       // Retrieve tweet history for the specified user ID
       return axios.get(
-        `https://api.twitter.com/2/users/${userId}/tweets?max_results=50`,
+        `https://api.twitter.com/2/users/${userId}/tweets?max_results=5`,
         {
           headers: {
             Authorization: `Bearer ${Bearerlocaltoken}`,
@@ -177,4 +244,5 @@ export const index = () => {
     });
 };
 
-index();
+// index();
+handleSendDirectMessage();

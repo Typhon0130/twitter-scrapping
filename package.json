@@ -15,6 +15,7 @@
     "csv-write-stream": "^2.0.0",
     "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",
-    "twit": "^2.2.11"
+    "twit": "^2.2.11",
+    "twitter-lite": "^1.1.0"
   }
 }
