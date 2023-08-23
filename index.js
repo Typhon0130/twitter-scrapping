@@ -27,7 +27,7 @@ const handleGetLikingUsers = async (tweet_id) => {
       `https://api.twitter.com/2/tweets/${tweet_id}/liking_users?user.fields=name,username,description`,
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${Bearerlocaltoken}`,
         },
       }
     );
@@ -81,72 +81,36 @@ const handleGetComments = async (tweet_id) => {
 };
 
 // Send new message to user using User Id.
-// const handleSendDirectMessage = async () => {
-//   const user_id = 2890133000;
-//   try {
-//     console.log(Bearerlocaltoken);
+const handleSendDirectMessage = async () => {
+  const user_id = 2890133000;
+  try {
+    console.log(accessToken);
+    console.log(accessToken, "~~~~~~~~~~~~~~~~~");
 
-//     await axios({
-//       method: "post",
-//       url: `https://api.twitter.com/2/dm_conversations/with/2890133000/messages`,
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//         "Content-Type": "application/json",
-//         "Accept-Encoding": "gzip, deflate, br",
-//       },
-//       data: {
-//         text: "Hello World!",
-//       },
-//     })
-//       .then((res) => {
-//         console.log(1);
-//         console.log(res);
-//       })
-//       .catch((err) => {
-//         console.log(2);
-//         console.log(err);
-//       });
-//   } catch (err) {
-//     console.log(err);
-//     return;
-//   }
-// };
-
-export const handleSendDirectMessage = () => {
-  axios
-    .post(
-      "https://api.twitter.com/oauth2/token",
-      "grant_type=client_credentials",
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${encodedCredentials}`,
-        },
-      }
-    )
-    .then(async (response) => {
-      const bearerToken = response.data;
-      console.log(bearerToken, "bearerToken");
-      try {
-        const res = await axios({
-          method: "post",
-          url: `https://api.twitter.com/2/dm_conversations/with/2890133000/messages`,
-          headers: {
-            Authorization: `Bearer ${bearerToken}`,
-            "Content-Type": "application/json",
-            "Accept-Encoding": "gzip, deflate, br",
-          },
-          data: {
-            text: "Hello World!",
-          },
-        });
+    await axios({
+      method: "post",
+      url: `https://api.twitter.com/2/dm_conversations/with/${user_id}/messages`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        "Accept-Encoding": "gzip, deflate, br",
+      },
+      data: {
+        text: "Hello World!",
+      },
+    })
+      .then((res) => {
         console.log(1);
         console.log(res);
-      } catch (err) {
+      })
+      .catch((err) => {
         console.log(2);
         console.log(err);
-      }
-    });
+      });
+  } catch (err) {
+    console.log(err);
+    return;
+  }
 };
 
 export const index = () => {
@@ -237,6 +201,7 @@ export const index = () => {
       console.log("Success");
     })
     .catch((error) => {
+      console.log(1);
       console.error(
         "An error occurred:",
         error.response ? error.response.data : error.message
@@ -244,5 +209,4 @@ export const index = () => {
     });
 };
 
-// index();
-handleSendDirectMessage();
+index();
