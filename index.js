@@ -24,7 +24,7 @@ const encodedCredentials = Buffer.from(
 const handleGetLikingUsers = async (tweet_id) => {
   try {
     const response = await axios.get(
-      `https://api.twitter.com/2/tweets/${tweet_id}/liking_users?user.fields=name,username,description`,
+      `https://api.twitter.com/2/tweets/${tweet_id}/liking_users?user.fields=id,name,username,description`,
       {
         headers: {
           Authorization: `Bearer ${Bearerlocaltoken}`,
@@ -33,6 +33,7 @@ const handleGetLikingUsers = async (tweet_id) => {
     );
     const count = await response.data.meta.result_count;
     const data = await response.data.data;
+    console.log(data, "user list");
     return {
       count,
       data,
