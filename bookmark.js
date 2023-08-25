@@ -91,7 +91,7 @@ const params = {
     //Gets access token
     await authClient.requestAccessToken(code);
 
-    // //Get the user ID
+    //Get the user ID
     const {
       data: { id },
     } = await client.users.findMyUser();
