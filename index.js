@@ -33,7 +33,6 @@ const handleGetLikingUsers = async (tweet_id) => {
     );
     const count = await response.data.meta.result_count;
     const data = await response.data.data;
-    console.log(data, "user list");
     return {
       count,
       data,
@@ -78,39 +77,6 @@ const handleGetComments = async (tweet_id) => {
     return data;
   } catch (err) {
     throw err;
-  }
-};
-
-// Send new message to user using User Id.
-const handleSendDirectMessage = async () => {
-  const user_id = 2890133000;
-  try {
-    console.log(accessToken);
-    console.log(accessToken, "~~~~~~~~~~~~~~~~~");
-
-    await axios({
-      method: "post",
-      url: `https://api.twitter.com/2/dm_conversations/with/${user_id}/messages`,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
-      },
-      data: {
-        text: "Hello World!",
-      },
-    })
-      .then((res) => {
-        console.log(1);
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(2);
-        console.log(err);
-      });
-  } catch (err) {
-    console.log(err);
-    return;
   }
 };
 
