@@ -1,1 +1,3 @@
-## Twitter Datat Scrapping
+# Twitter Datat Scrapping 
+
+## How it works
