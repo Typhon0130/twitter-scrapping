@@ -6,4 +6,4 @@
 .env
 
 # Ignore Test File
-tweet_history.csv
+*.csv
