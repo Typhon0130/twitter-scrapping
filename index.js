@@ -96,13 +96,15 @@ export const index = () => {
     .then((response) => {
       const bearerToken = response.data.access_token;
       Bearerlocaltoken = response.data.access_token;
+      console.log(bearerToken);
+      console.log(1);
 
       // Retrieve user ID from screen name
       return axios.get(
         `https://api.twitter.com/2/users/by?usernames=${screenName}`,
         {
           headers: {
-            Authorization: `Bearer ${bearerToken}`,
+            Authorization: `Bearer ${process.env.BearerToken}`,
           },
         }
       );
@@ -110,6 +112,7 @@ export const index = () => {
     .then((response) => {
       const userId = response.data.data[0].id;
       // Retrieve tweet history for the specified user ID
+      console.log(2);
       return axios.get(
         `https://api.twitter.com/2/users/${userId}/tweets?max_results=5`,
         {
@@ -120,6 +123,7 @@ export const index = () => {
       );
     })
     .then(async (response) => {
+      console.log(3);
       const tweetData = response.data.data;
       // Prepare CSV file for storing tweet data
       const csvWriterInstance = csvWriter({
